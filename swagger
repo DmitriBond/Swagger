@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  title: OpenAPI Test
+  description: OpenAPI for training
+  termsOfService: http://example.com/terms/
+  contact:
+    name: Dmitry Bondar
+    email: dmitbond@yahoo.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: "1.0"
+servers:
+- url: https://dev.example.com
+  description: Development Server
+- url: https://qa.example.com
+  description: QA Server
+- url: https://prod.example.com
+  description: Production Server
+paths:
+  /v1/customers:
+    get:
+      responses:
+        '200':
+          description: List of Customers
+          content:
+            application/json:
+              schema:
+                maxItems: 100
+                minItems: 1
+                type: array
+                description: List of Customers
+                items:
+                  type: object
+                  properties:
+                    firstName:
+                      type: string
+                      minLength: 2
+                      maxLength: 100
+                      example: John
+                    lastName:
+                      type: string
+                      minLength: 2
+                      maxLength: 100
+                      example: Thompson
+                    address:
+                      type: object
+                      properties:
+                        line1:
+                          type: string
+                          example: 123 main
+                        city:
+                          type: string
+                          example: St Pete
+                        stateCode:
+                          maxLength: 2
+                          minLength: 2
+                          type: string
+                          description: 2 Letter State Code
+                          enum:
+                          - AL
+                          - AK
+                          - AZ
+                          - AR
+                          - CA
+                        zipCode:
+                          type: string
+                          example: "33701"
+  /v1/beers:
+    get:
+      responses:
+        200:
+          description: List of Beers
+          content:
+            application\json:
+              schema:
+                $ref: "#/components/schemas/BeerList"
+        404:
+          description: No Beers Found
+components:
+  schemas:
+    Brewery:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Bobs' sons
+        location:
+          type: string
+          minLength: 2
+          maxLength: 30
+          example: Denver
+    Beer:
+      type: array
+      items:
+        properties:
+          name:
+            type: string
+            minItems: 2
+            maxLength: 50
+            example: "Budweiser"
+          style:
+            type: string
+            minLength: 2
+            maxLength: 10
+            enum: [ALE, PALE_ALE, IPA, WHEAT, LAGER]
+          upc:
+            type: string
+            minLength: 12
+            maxLength: 12
+          price:
+            type: number
+            format: float
+          quantity on hand:
+            type: number
+            format: integer
+          brewery:
+            $ref: "#/components/schemas/Brewery"
+
+    BeerList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Beer"
